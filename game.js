@@ -12,6 +12,8 @@ function Game(width, height) {
   this.territories = {};
   this.board = new GameBoard( $("#gameboard") );
 
+  this.board.setPlayer( this.currentPlayer() );
+
   // loop through all the rows and columns
   for(var row = 0; row < height; row++) {
     for(var col = 0; col < width; col++) {
@@ -32,10 +34,14 @@ Game.prototype.placeArmies = function(territory_id, armies) {
   territory.armies = armies;
   this.board.drawTerritory(territory);
 }
+Game.prototype.currentPlayer = function() {
+  return this.players[ this.currentPlayerNumber ];
+}
 
 function Player(num) {
   this.id = num;
   this.num = num;
+  this.name = "Player " + (num + 1);
 }
 
 function Territory(row, col) {
@@ -57,4 +63,7 @@ GameBoard.prototype.drawTerritory = function(territory) {
   if (territory.armies > 0) text = territory.armies + "";
   else text = "[]";
   td.text(text);
+}
+GameBoard.prototype.setPlayer = function(player) {
+  this.content.find(".current-player").text(player.name);
 }
