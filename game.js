@@ -53,6 +53,15 @@ var Game = (function(){
         this.selectedTerritory = territory;
         this.board.highlightTerritory(territory);
       }
+    } else if (
+        this.selectedTerritory &&
+        this.selectedTerritory.isNeighbor(territory) &&
+        this.selectedTerritory.armies > 1) {
+      this.selectedTerritory.attack(territory);
+      this.board.unhighlightTerritory(this.selectedTerritory);
+      this.board.drawTerritory(this.selectedTerritory);
+      this.board.drawTerritory(territory);
+      this.selectedTerritory = null;
     }
   }
 
@@ -86,6 +95,14 @@ var Territory = (function(){
   p.isOwner = function(player) {
     if (this.owner && this.owner.id == player.id) return true;
     return false;
+  }
+  p.isNeighbor = function(territory) {
+    return true;
+  }
+  p.attack = function(territory) {
+    this.armies--;
+    territory.owner = this.owner;
+    territory.armies++;
   }
 
   return Territory;
