@@ -60,30 +60,40 @@ function Territory(row, col) {
   this.owner = null;
 }
 
-function GameBoard(content) {
-  // setup game board
-  this.content = content;
-}
-GameBoard.prototype.findCell = function(territory) {
-  if (!territory.content) {
-    var tr = $( this.content.find("tr")[territory.row] ),
-        td = $(           tr.find("td")[territory.col] );
-    td.click(function(e){
-      td.css("background-color", "red");
-    });
-    territory.content = td;
+var GameBoard = (function(){
+  var that;
+
+  // private function
+  var findCell = function(territory) {
+    if (!territory.content) {
+      var tr = $( this.content.find("tr")[territory.row] ),
+          td = $(           tr.find("td")[territory.col] );
+      td.click(function(e){
+        td.css("background-color", "red");
+      });
+      territory.content = td;
+    }
+    return territory.content;
   }
-  return territory.content;
-}
-GameBoard.prototype.drawTerritory = function(territory) {
-  var cell = this.findCell(territory);
-  if (territory.armies > 0) text = territory.armies + "";
-  else text = "[]";
-  cell.text(text);
-  if (territory.owner) {
-    cell.css("background-color", territory.owner.getColor());
+
+  // constructor
+  function board(content) {
+    this.content = content;
   }
-}
-GameBoard.prototype.setPlayer = function(player) {
-  this.content.find(".current-player").text(player.name);
-}
+
+  // public functions
+  board.prototype.drawTerritory = function(territory) {
+    var cell = findCell.call(this, territory);
+    if (territory.armies > 0) text = territory.armies + "";
+    else text = "[]";
+    cell.text(text);
+    if (territory.owner) {
+      cell.css("background-color", territory.owner.getColor());
+    }
+  }
+  board.prototype.setPlayer = function(player) {
+    this.content.find(".current-player").text(player.name);
+  }
+
+  return board;
+}());
