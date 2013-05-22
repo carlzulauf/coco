@@ -13,6 +13,7 @@ var Game = (function(){
     this.territories = {};
     this.selectedTerritory = null;
     this.board = new GameBoard( this, $("#gameboard") );
+    this.reinforcements = 0;
 
     this.board.setPlayer( this.currentPlayer() );
 
@@ -45,32 +46,54 @@ var Game = (function(){
   }
   p.selectTerritory = function(territory) {
     var player = this.currentPlayer();
-    if (territory.isOwner(player)) {
-      if (this.selectedTerritory == territory) {
-        this.selectedTerritory = null;
-        this.board.unhighlightTerritory(territory);
-      } else {
-        this.selectedTerritory = territory;
-        this.board.highlightTerritory(territory);
+    if (this.reinforcements > 0) {
+      if (territory.isOwner(player)) {
+        this.reinforcements--;
+        territory.armies++;
+        this.board.drawTerritory(territory);
+        if (this.reinforcements > 0) {
+          this.board.updateReinforcements(this.reinforcements);
+        } else {
+          this.nextPlayer();
+        }
       }
-    } else if (
-        this.selectedTerritory &&
-        this.selectedTerritory.isNeighbor(territory) &&
-        this.selectedTerritory.armies > 1) {
-      this.selectedTerritory.attack(territory);
-      this.board.unhighlightTerritory(this.selectedTerritory);
-      this.board.drawTerritory(this.selectedTerritory);
-      this.board.drawTerritory(territory);
-      this.selectedTerritory = null;
+    } else {
+      if (territory.isOwner(player)) {
+        if (this.selectedTerritory == territory) {
+          this.selectedTerritory = null;
+          this.board.unhighlightTerritory(territory);
+        } else {
+          this.selectedTerritory = territory;
+          this.board.highlightTerritory(territory);
+        }
+      } else if (
+          this.selectedTerritory &&
+          this.selectedTerritory.isNeighbor(territory) &&
+          this.selectedTerritory.armies > 1) {
+        this.selectedTerritory.attack(territory);
+        this.board.unhighlightTerritory(this.selectedTerritory);
+        this.board.drawTerritory(this.selectedTerritory);
+        this.board.drawTerritory(territory);
+        this.selectedTerritory = null;
+      }
     }
   }
   p.endTurn = function() {
     var player = this.currentPlayer();
     armies = Object.reduce(this.territories, function(armies, territory) {
-      if (territory.owner == player) armies += territory.armies;
+      if (territory.owner == player) armies++;
       return armies;
     }, 0);
-    this.board.reinforceMode( Math.ceil(armies / 2) );
+    this.reinforcements = Math.ceil(armies / 2)
+    this.board.reinforceMode( this.reinforcements );
+  }
+  p.nextPlayer = function() {
+    var i = this.currentPlayerNumber;
+    if (this.players[i + 1]) i++;
+    else i = 0;
+    this.currentPlayerNumber = i;
+    this.board.setPlayer( this.currentPlayer() );
+    this.board.attackMode();
   }
 
   return Game;
@@ -197,6 +220,13 @@ var GameBoard = (function(){
     this.reinforcementsCounter.text(reinforcements);
     this.reinforcements.show();
     this.endTurn.hide();
+  }
+  p.updateReinforcements = function(reinforcements) {
+    this.reinforcementsCounter.text(reinforcements);
+  }
+  p.attackMode = function() {
+    this.reinforcements.hide();
+    this.endTurn.show();
   }
 
   return GameBoard;
