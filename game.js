@@ -65,7 +65,12 @@ var Game = (function(){
     }
   }
   p.endTurn = function() {
-
+    var player = this.currentPlayer();
+    armies = Object.reduce(this.territories, function(armies, territory) {
+      if (territory.owner == player) armies += territory.armies;
+      return armies;
+    }, 0);
+    this.board.reinforceMode( Math.ceil(armies / 2) );
   }
 
   return Game;
@@ -187,6 +192,11 @@ var GameBoard = (function(){
     var span = this.content.find(".current-player");
     span.text(player.name);
     span.css("background-color", player.getColor());
+  }
+  p.reinforceMode = function(reinforcements) {
+    this.reinforcementsCounter.text(reinforcements);
+    this.reinforcements.show();
+    this.endTurn.hide();
   }
 
   return GameBoard;
