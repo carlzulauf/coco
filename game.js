@@ -26,23 +26,31 @@ function Game(width, height) {
   }
 
   // place initial armies in top right and bottom left
-  this.placeArmies("0,3", 2);
-  this.placeArmies("3,0", 2);
+  this.placeArmies("0,3", 2, this.players[0]);
+  this.placeArmies("3,0", 2, this.players[1]);
 }
-Game.prototype.placeArmies = function(territory_id, armies) {
+Game.prototype.placeArmies = function(territory_id, armies, player) {
   var territory = this.territories[territory_id];
   territory.armies = armies;
+  territory.owner = player;
   this.board.drawTerritory(territory);
 }
 Game.prototype.currentPlayer = function() {
   return this.players[ this.currentPlayerNumber ];
 }
 
-function Player(num) {
-  this.id = num;
-  this.num = num;
-  this.name = "Player " + (num + 1);
-}
+var Player = (function(){
+  var colors = ["green", "blue", "red", "orange"];
+  function Player(num) {
+    this.id = num;
+    this.num = num;
+    this.name = "Player " + (num + 1);
+  }
+  Player.prototype.getColor = function() {
+    return colors[this.num];
+  }
+  return Player;
+}());
 
 function Territory(row, col) {
   // set up territory, neighbors, etc
@@ -72,6 +80,9 @@ GameBoard.prototype.drawTerritory = function(territory) {
   if (territory.armies > 0) text = territory.armies + "";
   else text = "[]";
   cell.text(text);
+  if (territory.owner) {
+    cell.css("background-color", territory.owner.getColor());
+  }
 }
 GameBoard.prototype.setPlayer = function(player) {
   this.content.find(".current-player").text(player.name);
