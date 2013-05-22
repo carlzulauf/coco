@@ -56,13 +56,19 @@ function GameBoard(content) {
   // setup game board
   this.content = content;
 }
+GameBoard.prototype.findCell = function(territory) {
+  if (!territory.content) {
+    var tr = $( this.content.find("tr")[territory.row] ),
+        td = $(           tr.find("td")[territory.col] );
+    territory.content = td;
+  }
+  return territory.content;
+}
 GameBoard.prototype.drawTerritory = function(territory) {
-  var tr = $( this.content.find("tr")[territory.row] ),
-      td = $(           tr.find("td")[territory.col] ),
-      text;
+  var cell = this.findCell(territory);
   if (territory.armies > 0) text = territory.armies + "";
   else text = "[]";
-  td.text(text);
+  cell.text(text);
 }
 GameBoard.prototype.setPlayer = function(player) {
   this.content.find(".current-player").text(player.name);
