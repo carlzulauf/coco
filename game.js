@@ -158,7 +158,9 @@ var GameBoard = (function(){
     this.findCell(territory).css("border", 0);
   }
   p.setPlayer = function(player) {
-    this.content.find(".current-player").text(player.name);
+    var span = this.content.find(".current-player");
+    span.text(player.name);
+    span.css("background-color", player.getColor());
   }
 
   return GameBoard;
