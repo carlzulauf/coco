@@ -60,6 +60,9 @@ GameBoard.prototype.findCell = function(territory) {
   if (!territory.content) {
     var tr = $( this.content.find("tr")[territory.row] ),
         td = $(           tr.find("td")[territory.col] );
+    td.click(function(e){
+      td.css("background-color", "red");
+    });
     territory.content = td;
   }
   return territory.content;
