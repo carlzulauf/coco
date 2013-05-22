@@ -61,10 +61,14 @@ function Territory(row, col) {
 }
 
 var GameBoard = (function(){
-  var that;
+  // constructor
+  function board(content) {
+    this.content = content;
+  }
+  var p = board.prototype;
 
-  // private function
-  var findCell = function(territory) {
+  // public functions
+  p.findCell = function(territory) {
     if (!territory.content) {
       var tr = $( this.content.find("tr")[territory.row] ),
           td = $(           tr.find("td")[territory.col] );
@@ -75,15 +79,8 @@ var GameBoard = (function(){
     }
     return territory.content;
   }
-
-  // constructor
-  function board(content) {
-    this.content = content;
-  }
-
-  // public functions
-  board.prototype.drawTerritory = function(territory) {
-    var cell = findCell.call(this, territory);
+  p.drawTerritory = function(territory) {
+    var cell = this.findCell(territory);
     if (territory.armies > 0) text = territory.armies + "";
     else text = "[]";
     cell.text(text);
@@ -91,7 +88,7 @@ var GameBoard = (function(){
       cell.css("background-color", territory.owner.getColor());
     }
   }
-  board.prototype.setPlayer = function(player) {
+  p.setPlayer = function(player) {
     this.content.find(".current-player").text(player.name);
   }
 
