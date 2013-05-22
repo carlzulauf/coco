@@ -43,6 +43,18 @@ var Game = (function(){
   p.currentPlayer = function() {
     return this.players[ this.currentPlayerNumber ];
   }
+  p.selectTerritory = function(territory) {
+    var player = this.currentPlayer();
+    if (territory.isOwner(player)) {
+      if (this.selectedTerritory == territory) {
+        this.selectedTerritory = null;
+        this.board.unhighlightTerritory(territory);
+      } else {
+        this.selectedTerritory = territory;
+        this.board.highlightTerritory(territory);
+      }
+    }
+  }
 
   return Game;
 }());
@@ -60,20 +72,31 @@ var Player = (function(){
   return Player;
 }());
 
-function Territory(game, row, col) {
-  // set up territory, neighbors, etc
-  this.game = game;
-  this.armies = 0;
-  this.row = row;
-  this.col = col;
-  this.owner = null;
-}
+var Territory = (function(){
+  function Territory(game, row, col) {
+    // set up territory, neighbors, etc
+    this.game = game;
+    this.armies = 0;
+    this.row = row;
+    this.col = col;
+    this.owner = null;
+  }
+  p = Territory.prototype;
+
+  p.isOwner = function(player) {
+    if (this.owner && this.owner.id == player.id) return true;
+    return false;
+  }
+
+  return Territory;
+}());
 
 var GameBoard = (function(){
   // constructor
   function GameBoard(game, content) {
     this.game = game;
     this.content = content;
+    this.lastHighlight = null;
   }
   var p = GameBoard.prototype;
 
@@ -81,8 +104,9 @@ var GameBoard = (function(){
   p.findCell = function(territory) {
     if (!territory.content) {
       var tr = $( this.content.find("tr")[territory.row] ),
-          td = $(           tr.find("td")[territory.col] );
-      td.click(function(e){ this.game.selectTerritory(territory) });
+          td = $(           tr.find("td")[territory.col] ),
+          that = this;
+      td.click(function(e){ that.game.selectTerritory(territory) });
       territory.content = td;
     }
     return territory.content;
@@ -95,6 +119,15 @@ var GameBoard = (function(){
     if (territory.owner) {
       cell.css("background-color", territory.owner.getColor());
     }
+  }
+  p.highlightTerritory = function(territory) {
+    var cell = this.findCell(territory);
+    if (this.lastHighlight) this.lastHighlight.css("border", 0);
+    cell.css("border", "2px dotted red");
+    this.lastHighlight = cell;
+  }
+  p.unhighlightTerritory = function(territory) {
+    this.findCell(territory).css("border", 0);
   }
   p.setPlayer = function(player) {
     this.content.find(".current-player").text(player.name);
