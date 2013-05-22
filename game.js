@@ -97,7 +97,18 @@ var Territory = (function(){
     return false;
   }
   p.isNeighbor = function(territory) {
-    return true;
+    if (
+        (
+          this.row == territory.row &&
+          Math.abs(this.col - territory.col) == 1
+        ) ||
+        (
+          this.col == territory.col &&
+          Math.abs(this.row - territory.row) == 1
+        )) {
+      return true;
+    }
+    return false;
   }
   p.attack = function(territory) {
     this.armies--;
