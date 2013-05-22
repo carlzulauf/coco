@@ -80,11 +80,10 @@ var Game = (function(){
   }
   p.endTurn = function() {
     var player = this.currentPlayer();
-    armies = Object.reduce(this.territories, function(armies, territory) {
+    this.reinforcements = Object.reduce(this.territories, function(armies, territory) {
       if (territory.owner == player) armies++;
       return armies;
     }, 0);
-    this.reinforcements = Math.ceil(armies / 2)
     this.board.reinforceMode( this.reinforcements );
   }
   p.nextPlayer = function() {
