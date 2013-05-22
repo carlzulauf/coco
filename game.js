@@ -64,6 +64,9 @@ var Game = (function(){
       this.selectedTerritory = null;
     }
   }
+  p.endTurn = function() {
+
+  }
 
   return Game;
 }());
@@ -139,6 +142,15 @@ var GameBoard = (function(){
     this.game = game;
     this.content = content;
     this.lastHighlight = null;
+    this.endTurn = content.find(".end-turn");
+    this.reinforcements = content.find(".reinforcements");
+    this.reinforcementsCounter = this.reinforcements.find(".counter");
+
+    var that = this;
+    this.endTurn.click(function(e){
+      e.preventDefault();
+      that.game.endTurn();
+    });
   }
   var p = GameBoard.prototype;
 
