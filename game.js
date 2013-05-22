@@ -3,7 +3,7 @@ $(function(){
 });
 
 // generates and returns a game object, which keeps track of the game state
-var Game = function(width, height) {
+function Game(width, height) {
   this.players = [
     new Player(0),
     new Player(1)
@@ -26,8 +26,7 @@ var Game = function(width, height) {
   // place initial armies in top right and bottom left
   this.placeArmies("0,3", 2);
   this.placeArmies("3,0", 2);
-};
-
+}
 Game.prototype.placeArmies = function(territory_id, armies) {
   var territory = this.territories[territory_id];
   territory.armies = armies;
