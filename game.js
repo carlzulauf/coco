@@ -28,7 +28,7 @@ var Game = (function(){
     }
 
     // place initial armies in top right and bottom left
-    this.placeArmies("1,1", 2, this.players[0]);
+    this.placeArmies("1,1", 4, this.players[0]);
     this.placeArmies("1,2", 2, this.players[1]);
   }
 
@@ -111,9 +111,23 @@ var Territory = (function(){
     return false;
   }
   p.attack = function(territory) {
-    this.armies--;
-    territory.owner = this.owner;
-    territory.armies++;
+    var mine = this.armies,
+        theirs = territory.armies;
+    while(mine > 1 && theirs > 0) {
+      if (Math.random() > 0.5) {
+        theirs--;
+      } else {
+        mine--;
+      }
+    }
+    if (theirs == 0) {
+      this.armies = 1;
+      territory.armies = mine - 1;
+      territory.owner = this.owner;
+    } else {
+      this.armies = mine;
+      territory.armies = theirs;
+    }
   }
 
   return Territory;
