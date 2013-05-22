@@ -29,8 +29,8 @@ var Game = (function(){
     }
 
     // place initial armies in top right and bottom left
-    this.placeArmies("1,1", 4, this.players[0]);
-    this.placeArmies("1,2", 2, this.players[1]);
+    this.placeArmies("0,3", 2, this.players[0]);
+    this.placeArmies("3,0", 2, this.players[1]);
   }
 
   var p = Game.prototype;
