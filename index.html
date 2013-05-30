@@ -2,16 +2,41 @@
 <head>
   <script src="jquery-1.9.1.min.js"></script>
   <script src="game.js"></script>
+  <style>
+
+    table {
+      background-color: grey;
+      height: 500;
+      width: 500;
+      border-spacing: 2px;
+    }
+
+    td {
+      background-color: white;
+    }
+
+    .row-one td {
+      color: white;
+      background-color: black;
+      height: 50px;
+    }
+
+    .row-two td {
+      background-color: blue;
+      height: 10px;
+    }
+
+  </style>
 </head>
 <body>
   <table id="gameboard">
-    <tr>
+    <tr class="row-one">
       <td></td>
       <td></td>
       <td></td>
       <td></td>
     </tr>
-    <tr>
+    <tr class="row-two">
       <td></td>
       <td></td>
       <td></td>
